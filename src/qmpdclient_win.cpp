@@ -32,7 +32,7 @@
 
 void QMPDClient::grabKeys() {
 	Q_ASSERT(m_mainWindow);
-	if(!RegisterHotKey(m_mainWindow->winId(), 1, 0, VK_MEDIA_PLAY_PAUSE))
+        /*if(!RegisterHotKey(m_mainWindow->winId(), 1, 0, VK_MEDIA_PLAY_PAUSE))
 		qWarning("Could not register hotkey VK_MEDIA_PLAY_PAUSE");
 	if(!RegisterHotKey(m_mainWindow->winId(), 2, 0, VK_MEDIA_STOP))
 		qWarning("Could not register hotkey VK_MEDIA_STOP");
@@ -45,12 +45,12 @@ void QMPDClient::grabKeys() {
 	if(!RegisterHotKey(m_mainWindow->winId(), 6, 0, VK_VOLUME_UP))
 		qWarning("Could not register hotkey VK_VOLUME_UP");
 	if(!RegisterHotKey(m_mainWindow->winId(), 7, 0, VK_VOLUME_DOWN))
-		qWarning("Could not register hotkey VK_VOLUME_DOWN");
+                qWarning("Could not register hotkey VK_VOLUME_DOWN");*/
 }
 
 void QMPDClient::ungrabKeys() {
 	Q_ASSERT(m_mainWindow);
-	if(!UnregisterHotKey(m_mainWindow->winId(), 1))
+        /*if(!UnregisterHotKey(m_mainWindow->winId(), 1))
 		qWarning("Could not unregister hotkey VK_MEDIA_PLAY_PAUSE");
 	if(!UnregisterHotKey(m_mainWindow->winId(), 2))
 		qWarning("Could not unregister hotkey VK_MEDIA_STOP");
@@ -63,7 +63,7 @@ void QMPDClient::ungrabKeys() {
 	if(!UnregisterHotKey(m_mainWindow->winId(), 6))
 		qWarning("Could not unregister hotkey VK_VOLUME_UP");
 	if(!UnregisterHotKey(m_mainWindow->winId(), 7))
-		qWarning("Could not unregister hotkey VK_VOLUME_DOWN");
+                qWarning("Could not unregister hotkey VK_VOLUME_DOWN");*/
 }
 
 bool QMPDClient::winEventFilter(MSG *m, long *result) {
