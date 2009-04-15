@@ -119,7 +119,7 @@ ServerInfo Config::server(const QString &name) const {
 		if (si.name() == name)
 			return si;
 	}
-	DEBUG("Server `%s' not found, returning first in list.", qPrintable(name));
+        qWarning("Server `%s' not found, returning first in list.", qPrintable(name));
 	// No matches, return first server
 	return sil.first();
 }
@@ -328,7 +328,7 @@ QString Config::style(const QString &fn) const {
 		return QString();
 	QFile file(filename);
 	if (!file.open(QIODevice::ReadOnly)) {
-		DEBUG("Style file not readable: %s", qPrintable(filename));
+                qWarning("Style file not readable: %s", qPrintable(filename));
 		return QString();
 	}
 	const QString style = file.readAll();

@@ -53,7 +53,7 @@ void Notifications::notify(const QString &text) {
 		m_dbus = notifyDBus(text);
 		if (m_dbus) // DBus notify succeeded
 			return;
-		DEBUG("DBus notify failed, falling back to custom notifier.");
+                qWarning("DBus notify failed, falling back to custom notifier.");
 	}
 
 	// TODO: height and width set optionaly
