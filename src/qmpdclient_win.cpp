@@ -33,7 +33,7 @@
 
 void QMPDClient::grabKeys() {
         Q_ASSERT(m_mainWindow);
-        bool asd = Config::instance()->enableGlobalShortcuts();
+        Config::instance()->enableGlobalShortcuts();
         if(Config::instance()->enableGlobalShortcuts()) {
             if(!RegisterHotKey(m_mainWindow->winId(), 1, 0, VK_MEDIA_PLAY_PAUSE))
 		qWarning("Could not register hotkey VK_MEDIA_PLAY_PAUSE");
