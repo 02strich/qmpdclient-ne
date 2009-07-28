@@ -22,6 +22,7 @@
 #include "mpdsonglist.h"
 #include "stringlistmodel.h"
 #include "stringlistview.h"
+#include "mpd.h"
 #include "config.h"
 #include <QMap>
 #include <QMenu>
@@ -35,6 +36,11 @@ StringListView::StringListView(QWidget *parent) : AbstractList(parent) {
 	m_playAction = addMenuAction("play", this, SLOT(play()));
 	m_menu->addSeparator();
 	m_informationAction = addMenuAction("information", this, SLOT(information()));
+	connect(this, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(doubleClicked(const QModelIndex &)));
+}
+
+void StringListView::doubleClicked(const QModelIndex &) {
+	MPD::instance()->addSongs(selectedSongs(), Config::instance()->enqueue());
 }
 
 QStringList StringListView::selectedStrings() const {
@@ -77,14 +83,18 @@ QString StringListView::normalizeString(const QString l) {
 }
 
 /**
- * Return a sorted string list with strings normalized
+ * Return a sorted string list, sorted alphabetically case insensitive
+ * @param QStringList list of strings
+ * @param bool to normalize or not to normalize
  */
-QStringList StringListView::normalizedSort(const QStringList &strings) {
-
+QStringList StringListView::sort(const QStringList &strings, bool normalize) {
 	// Recommended way to have arbitrary sorting from QT docs
 	QMap<QString, QString> map;
 	foreach (QString str, strings) {
-		map.insert(StringListView::normalizeString(str), str);
+		if (normalize)
+			map.insert(StringListView::normalizeString(str.toLower()), str);
+		else
+			map.insert(str.toLower(), str);
 	}
 
 	QStringList sorted;
@@ -103,7 +113,7 @@ void StringListView::filter(const QString &needle) {
 void StringListView::setStrings(const QStringList &strings) {
 	Q_ASSERT(m_model);
 
-	m_strings = Config::instance()->disregardLeadingThe() ? StringListView::normalizedSort(strings) : strings;
+	m_strings = StringListView::sort(strings, Config::instance()->disregardLeadingThe());
 
 	m_model->setStringList(m_strings);
 	setCurrentIndex(m_model->index(0));

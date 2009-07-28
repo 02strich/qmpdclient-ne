@@ -24,7 +24,6 @@ TYPE::TYPE(QWidget *parent) : PARENT(parent),
 		m_menu(new QMenu(this)) {
 	connect(MPDConnection::instance(), SIGNAL(connected(const ServerInfo &)), this, SLOT(connected()));
 	connect(MPDConnection::instance(), SIGNAL(disconnected(const QString &)), this, SLOT(disconnected()));
-	connect(this, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(activated(const QModelIndex &)));
 }
 
 QAction *TYPE::addMenuAction(const QString &objectName, QObject *receiver, const char *method, bool conditional) {
@@ -62,10 +61,6 @@ void TYPE::selectionChanged(const QItemSelection &s, const QItemSelection &u) {
 		Q_ASSERT(a);
 		a->setEnabled(!s.indexes().isEmpty());
 	}
-}
-
-void TYPE::activated(const QModelIndex &) {
-	MPD::instance()->addSongs(selectedSongs(), Config::instance()->enqueue());
 }
 
 void TYPE::enqueue() {
@@ -131,4 +126,10 @@ void TYPE::mouseReleaseEvent(QMouseEvent *e) {
 		m_abstractModel->setDragDisabled(false);
 	}
 	PARENT::mouseReleaseEvent(e);
+}
+
+void TYPE::keyPressEvent(QKeyEvent *e) {
+	if ((e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter))
+		emit doubleClicked(QModelIndex());
+	PARENT::keyPressEvent(e);
 }
