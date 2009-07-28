@@ -37,6 +37,7 @@ Section "QMPDClient (required)"
   
   ; Put file there
   File "qmpdclient.exe"
+  File "mingwm10.dll"
   File "QtCore4.dll"
   File "QtGui4.dll"
   File "QtNetwork4.dll"
@@ -74,6 +75,7 @@ Section "Uninstall"
 
   ; Remove files and uninstaller
   Delete $INSTDIR\qmpdclient.exe
+  Delete $INSTDIR\mingwm10.dll
   Delete $INSTDIR\QtCore4.dll
   Delete $INSTDIR\QtGui4.dll
   Delete $INSTDIR\QtNetwork4.dll
