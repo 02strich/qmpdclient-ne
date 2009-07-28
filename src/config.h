@@ -69,6 +69,7 @@ public:
 
 	// Shortcuts
 	QString shortcut(const QString &) const;
+        bool enableGlobalShortcuts() const;
 
 	// Language
 	QString locale() const;
@@ -163,6 +164,7 @@ public slots:
 	// Shortcuts
 	void setOriginalShortcut(const QString &action, const QString &shortcut);
 	void setShortcut(const QString &action, const QString &shortcut);
+        void setEnableGlobalShortcuts(bool value);
 
 	// Language
 	void setLocale(const QString &);
