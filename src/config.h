@@ -69,6 +69,7 @@ public:
 
 	// Shortcuts
 	QString shortcut(const QString &) const;
+        bool enableGlobalShortcuts() const;
 
 	// Language
 	QString locale() const;
@@ -85,6 +86,7 @@ public:
 	bool minimizeToTray() const;
 	bool startHidden() const;
 	bool trayIconEnabled() const;
+	bool extendedSongInfoEnabled() const;
 
 	// Dynamic playlist
 	int autoAddCount() const;
@@ -162,6 +164,7 @@ public slots:
 	// Shortcuts
 	void setOriginalShortcut(const QString &action, const QString &shortcut);
 	void setShortcut(const QString &action, const QString &shortcut);
+        void setEnableGlobalShortcuts(bool value);
 
 	// Language
 	void setLocale(const QString &);
@@ -177,6 +180,7 @@ public slots:
 	void setMinimizeToTray(bool);
 	void setStartHidden(bool);
 	void setTrayIconEnabled(bool);
+	void setExtendedSongInfoEnabled(bool);
 
 	// Dynamic playlist
 	void setAutoAddCount(int);

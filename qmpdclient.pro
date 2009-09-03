@@ -8,11 +8,11 @@ CONFIG += qt
 # addition ldflags for release build
 QMAKE_LFLAGS_RELEASE += -O2 -g0 -s
 
-# CONFIG -= debug # Needed to avoid console on win32
+CONFIG -= debug # Needed to avoid console on win32
 TEMPLATE = app
 RESOURCES = qmpdclient.qrc
 VERSION = 1.1.0
-DEFINES += NAMEVER='"\\"QMPDClient-ne \
+DEFINES += NAMEVER='"\\"QMPDClient \
     $$VERSION\\""'
 DEFINES += VERSION='"\\"$$VERSION\\""'
 INCLUDEPATH += src
@@ -105,6 +105,7 @@ HEADERS += src/aafilter.h \
     src/timelabel.h \
     src/timeslider.h \
     src/trayicon.h \
+	src/traysonginfo.h \
     src/verticalbutton.h \
     src/lastfmsubmitter.h
 
@@ -173,12 +174,13 @@ SOURCES += src/aafilter.cpp \
     src/timelabel.cpp \
     src/timeslider.cpp \
     src/trayicon.cpp \
+	src/traysonginfo.cpp \
     src/verticalbutton.cpp \
     src/lastfmsubmitter.cpp
 
 # translations
 LANG_PATH = $$PWD/lang
-TRANSLATIONS = $$LANG_PATH/ru_RU.ts $$LANG_PATH/de_DE.ts  $$LANG_PATH/it_IT.ts  $$LANG_PATH/nn_NO.ts $$LANG_PATH/pt_BR.ts  $$LANG_PATH/sv_SE.ts  $$LANG_PATH/uk_UA.ts  $$LANG_PATH/zh_TW.ts $$LANG_PATH/fr_FR.ts $$LANG_PATH/nl_NL.ts $$LANG_PATH/no_NO.ts   $$LANG_PATH/tr_TR.ts  $$LANG_PATH/zh_CN.ts
+TRANSLATIONS = $$LANG_PATH/ru_RU.ts $$LANG_PATH/de_DE.ts  $$LANG_PATH/it_IT.ts  $$LANG_PATH/nn_NO.ts $$LANG_PATH/pt_BR.ts  $$LANG_PATH/sv_SE.ts  $$LANG_PATH/uk_UA.ts  $$LANG_PATH/zh_TW.ts $$LANG_PATH/fr_FR.ts $$LANG_PATH/nl_NL.ts $$LANG_PATH/no_NO.ts   $$LANG_PATH/tr_TR.ts  $$LANG_PATH/zh_CN.ts $$LANG_PATH/cs_CZ.ts
 
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
@@ -186,7 +188,7 @@ RCC_DIR = .res
 UI_DIR = .ui
 
 # Platform specific
-win32 { 
+win32 {
     debug:CONFIG += console
     LIBS += -lws2_32
     RC_FILE = icons/resource.rc
@@ -195,22 +197,22 @@ win32 {
 }
 
 # Installation in done through own installer on win32
-unix { 
-    !mac { 
+unix {
+    !mac {
         SOURCES += src/qmpdclient_x11.cpp
-        
+
         # Check for dbus support
-        contains(QT_CONFIG, dbus) { 
+        contains(QT_CONFIG, dbus) {
             message(DBus notifier: enabled)
             CONFIG += qdbus
             SOURCES += src/notifications_dbus.cpp
         }
-        else { 
+        else {
             message(DBus notifier: disabled (Qt is not compiled with dbus support))
             SOURCES += src/notifications_nodbus.cpp
         }
     }
-    mac { 
+    mac {
         RC_FILE = icons/qmpdclient.icns
         SOURCES += src/qmpdclient_mac.cpp \
             src/notifications_nodbus.cpp
@@ -220,9 +222,19 @@ unix {
     INSTALLS += target
     target.path = $$PREFIX/bin
 }
+unix {
+	desktop_file.files = qmpdclient.desktop
+	desktop_file.path = $$PREFIX/share/applications
+	icons.files = icons/qmpdclient64.png
+	icons.path = $$PREFIX/share/icons
+	INSTALLS += desktop_file icons
+}
+translations.commands = lrelease $$TRANSLATIONS
+translations.files = lang/*.qm
+translations.path = $$PREFIX/share/QMPDClient/translations
+
+INSTALLS += translations
 
 # update translations (make translate)
 QMAKE_EXTRA_TARGETS += translate
-translate.commands = lupdate $$PWD/qmpdclient.pro -ts $$TRANSLATIONS; \
-    lrelease $$TRANSLATIONS
-
+translate.commands = lupdate $$PWD/qmpdclient.pro -ts $$TRANSLATIONS;

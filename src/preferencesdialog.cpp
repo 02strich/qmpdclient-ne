@@ -389,6 +389,9 @@ void PreferencesDialog::initShortcutPage() {
 
 	ShortcutModel *model = new ShortcutModel(this);
 	shortcutList->setModel(model);
+
+        globalShortcuts->setChecked(Config::instance()->enableGlobalShortcuts());
+        connect(globalShortcuts, SIGNAL(toggled(bool)), Config::instance(), SLOT(setEnableGlobalShortcuts(bool)));
 }
 
 void PreferencesDialog::initTagGuesserPage() {
@@ -403,10 +406,12 @@ void PreferencesDialog::initTrayIconPage() {
 	trayIconCheck->setChecked(Config::instance()->trayIconEnabled());
 	startHiddenCheck->setChecked(Config::instance()->startHidden());
 	minToTrayCheck->setChecked(Config::instance()->minimizeToTray());
+	songInfoCheck->setChecked(Config::instance()->extendedSongInfoEnabled());
 
 	connect(trayIconCheck, SIGNAL(toggled(bool)), Config::instance(), SLOT(setTrayIconEnabled(bool)));
 	connect(minToTrayCheck, SIGNAL(toggled(bool)), Config::instance(), SLOT(setMinimizeToTray(bool)));
 	connect(startHiddenCheck, SIGNAL(toggled(bool)), Config::instance(), SLOT(setStartHidden(bool)));
+	connect(songInfoCheck, SIGNAL(toggled(bool)), Config::instance(), SLOT(setExtendedSongInfoEnabled(bool)));
 }
 
 void PreferencesDialog::initLastFmPage() {
@@ -627,34 +632,34 @@ void PreferencesDialog::iconsetChanged(QListWidgetItem *i) {
 }
 
 void PreferencesDialog::localeChanged(QListWidgetItem *i) {
-	if (i)
-		Config::instance()->setLocale(i->data(Qt::UserRole).toString());
+    if (i)
+        Config::instance()->setLocale(i->data(Qt::UserRole).toString());
 }
 
 void PreferencesDialog::notifierChanged(int index) {
-	int type = notificationCombo->itemData(index).toInt();
-	Config::instance()->setNotifier(type);
-	const bool enable = type == Notifications::CUSTOM;
-	desktopLabel->setEnabled(enable);
-	posLabel->setEnabled(enable);
-	foreach(QAbstractButton *b, d->positionGroup->buttons()) {
-		b->setEnabled(enable);
-	}
+    int type = notificationCombo->itemData(index).toInt();
+    Config::instance()->setNotifier(type);
+    const bool enable = type == Notifications::CUSTOM;
+    desktopLabel->setEnabled(enable);
+    posLabel->setEnabled(enable);
+    foreach(QAbstractButton *b, d->positionGroup->buttons()) {
+        b->setEnabled(enable);
+    }
 }
 
 void PreferencesDialog::outputChanged(QTreeWidgetItem *i, int col) {
-	if (i && col == 0)
-		MPD::instance()->toggleOutputDevice(i->type(), i->checkState(0) == Qt::Checked);
+    if (i && col == 0)
+        MPD::instance()->toggleOutputDevice(i->type(), i->checkState(0) == Qt::Checked);
 }
 
 void PreferencesDialog::styleChanged(QListWidgetItem *i) {
-	if (i)
-		Config::instance()->setStyleFile(i->data(Qt::UserRole).toString());
+    if (i)
+        Config::instance()->setStyleFile(i->data(Qt::UserRole).toString());
 }
 
 void PreferencesDialog::hashLastFmPassword() {
-	lastFmMd5PasswordRadio->setChecked(true);
-	lastFmPasswordEdit->setText(QCryptographicHash::hash(lastFmPasswordEdit->text().toAscii(), QCryptographicHash::Md5).toHex());
+    lastFmMd5PasswordRadio->setChecked(true);
+    lastFmPasswordEdit->setText(QCryptographicHash::hash(lastFmPasswordEdit->text().toAscii(), QCryptographicHash::Md5).toHex());
 }
 
 void PreferencesDialog::setLastFmSlider(int value) {

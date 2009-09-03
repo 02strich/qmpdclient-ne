@@ -20,6 +20,7 @@
 #include "mainwindow.h"
 #include "mpd.h"
 #include "qmpdclient.h"
+#include "config.h"
 
 #include <windows.h>
 #define VK_VOLUME_DOWN 0xAE
@@ -31,43 +32,48 @@
 #define VK_LAUNCH_MEDIA_SELECT 0xB5
 
 void QMPDClient::grabKeys() {
-	Q_ASSERT(m_mainWindow);
-        /*if(!RegisterHotKey(m_mainWindow->winId(), 1, 0, VK_MEDIA_PLAY_PAUSE))
+        Q_ASSERT(m_mainWindow);
+        Config::instance()->enableGlobalShortcuts();
+        if(Config::instance()->enableGlobalShortcuts()) {
+            if(!RegisterHotKey(m_mainWindow->winId(), 1, 0, VK_MEDIA_PLAY_PAUSE))
 		qWarning("Could not register hotkey VK_MEDIA_PLAY_PAUSE");
-	if(!RegisterHotKey(m_mainWindow->winId(), 2, 0, VK_MEDIA_STOP))
+            if(!RegisterHotKey(m_mainWindow->winId(), 2, 0, VK_MEDIA_STOP))
 		qWarning("Could not register hotkey VK_MEDIA_STOP");
-	if(!RegisterHotKey(m_mainWindow->winId(), 3, 0, VK_MEDIA_NEXT_TRACK))
+            if(!RegisterHotKey(m_mainWindow->winId(), 3, 0, VK_MEDIA_NEXT_TRACK))
 		qWarning("Could not register hotkey VK_MEDIA_NEXT_TRACK");
-	if(!RegisterHotKey(m_mainWindow->winId(), 4, 0, VK_MEDIA_PREV_TRACK))
+            if(!RegisterHotKey(m_mainWindow->winId(), 4, 0, VK_MEDIA_PREV_TRACK))
 		qWarning("Could not register hotkey VK_MEDIA_PREV_TRACK");
-	if(!RegisterHotKey(m_mainWindow->winId(), 5, 0, VK_LAUNCH_MEDIA_SELECT))
+            if(!RegisterHotKey(m_mainWindow->winId(), 5, 0, VK_LAUNCH_MEDIA_SELECT))
 		qWarning("Could not register hotkey VK_LAUNCH_MEDIA_SELECT");
-	if(!RegisterHotKey(m_mainWindow->winId(), 6, 0, VK_VOLUME_UP))
+            if(!RegisterHotKey(m_mainWindow->winId(), 6, 0, VK_VOLUME_UP))
 		qWarning("Could not register hotkey VK_VOLUME_UP");
-	if(!RegisterHotKey(m_mainWindow->winId(), 7, 0, VK_VOLUME_DOWN))
-                qWarning("Could not register hotkey VK_VOLUME_DOWN");*/
+            if(!RegisterHotKey(m_mainWindow->winId(), 7, 0, VK_VOLUME_DOWN))
+                qWarning("Could not register hotkey VK_VOLUME_DOWN");
+        }
 }
 
 void QMPDClient::ungrabKeys() {
-	Q_ASSERT(m_mainWindow);
-        /*if(!UnregisterHotKey(m_mainWindow->winId(), 1))
-		qWarning("Could not unregister hotkey VK_MEDIA_PLAY_PAUSE");
-	if(!UnregisterHotKey(m_mainWindow->winId(), 2))
-		qWarning("Could not unregister hotkey VK_MEDIA_STOP");
-	if(!UnregisterHotKey(m_mainWindow->winId(), 3))
-		qWarning("Could not unregister hotkey VK_MEDIA_NEXT_TRACK");
-	if(!UnregisterHotKey(m_mainWindow->winId(), 4))
-		qWarning("Could not unregister hotkey VK_MEDIA_PREV_TRACK");
-	if(!UnregisterHotKey(m_mainWindow->winId(), 5))
-		qWarning("Could not register hotkey VK_LAUNCH_MEDIA_SELECT");
-	if(!UnregisterHotKey(m_mainWindow->winId(), 6))
-		qWarning("Could not unregister hotkey VK_VOLUME_UP");
-	if(!UnregisterHotKey(m_mainWindow->winId(), 7))
-                qWarning("Could not unregister hotkey VK_VOLUME_DOWN");*/
+    Q_ASSERT(m_mainWindow);
+    //if(Config::instance()->enableGlobalShortcuts()) {
+        if(!UnregisterHotKey(m_mainWindow->winId(), 1))
+            qWarning("Could not unregister hotkey VK_MEDIA_PLAY_PAUSE");
+        if(!UnregisterHotKey(m_mainWindow->winId(), 2))
+            qWarning("Could not unregister hotkey VK_MEDIA_STOP");
+        if(!UnregisterHotKey(m_mainWindow->winId(), 3))
+            qWarning("Could not unregister hotkey VK_MEDIA_NEXT_TRACK");
+        if(!UnregisterHotKey(m_mainWindow->winId(), 4))
+            qWarning("Could not unregister hotkey VK_MEDIA_PREV_TRACK");
+        if(!UnregisterHotKey(m_mainWindow->winId(), 5))
+            qWarning("Could not register hotkey VK_LAUNCH_MEDIA_SELECT");
+        if(!UnregisterHotKey(m_mainWindow->winId(), 6))
+            qWarning("Could not unregister hotkey VK_VOLUME_UP");
+        if(!UnregisterHotKey(m_mainWindow->winId(), 7))
+            qWarning("Could not unregister hotkey VK_VOLUME_DOWN");
+    //}
 }
 
 bool QMPDClient::winEventFilter(MSG *m, long *result) {
-	Q_ASSERT(m_mainWindow);
+        //Q_ASSERT(m_mainWindow);
 	if(m->message != WM_HOTKEY)
 		return false;
 

@@ -212,6 +212,10 @@ QList<QPointer<QObject> > QMPDClient::safeChildren() {
 	return safeChildren;
 }
 
+void QMPDClient::commitData(QSessionManager & manager) {
+	Config::instance()->sync();
+}
+
 int g_debugLevel = 0; // Reference to global debug variable declared in debug.h
 
 int main(int argc, char **argv) {
