@@ -35,7 +35,7 @@ class Notifications
 
 public:
 	Notifications(QObject *);
-	enum Type { CUSTOM = 0, FREEDESKTOP = 1 };
+	enum Type { CUSTOM = 0, FREEDESKTOP = 1, NATIVE = 2 };
 	static QList<Type> notifiers();
 	static QString name(Type);
 
@@ -45,6 +45,7 @@ private slots:
 private:
 	bool notifyDBus(const QString &);
 	bool notifyCustom(const QString &);
+	bool notifyNative(const QString &);
 	void notify(const QString &);
 	QString makeTitle(const MPDSong &);
 

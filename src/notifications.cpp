@@ -30,6 +30,8 @@ QString Notifications::name(Type t) {
 	switch (t) {
 		case FREEDESKTOP:
 			return "Freedesktop";
+		case NATIVE:
+			return "Native";
 		default:
 			return "QMPDClient";
 	}
@@ -51,11 +53,25 @@ QString Notifications::makeTitle(const MPDSong &s) {
 void Notifications::notify(const QString &text) {
 	if (Config::instance()->notifier() == FREEDESKTOP && m_dbus) {
 		m_dbus = notifyDBus(text);
-		if (m_dbus) // DBus notify succeeded
+		if (m_dbus) { // DBus notify succeeded
 			return;
-                qWarning("DBus notify failed, falling back to custom notifier.");
+		} else {
+        	qWarning("DBus notify failed, falling back to custom notifier.");
+		} 
+	} else if(Config::instance()->notifier() == NATIVE) {
+		if(notifyNative(text)) {
+			return;
+		} else {
+			qWarning("Native notfiy failed, falling back to custom notifier.");
+		}
 	}
+	
+	if(!notifyCustom(text)) {
+		qWarning("Custon notify failed. Strange.");
+	}
+}
 
+bool Notifications::notifyCustom(const QString& text) {
 	// TODO: height and width set optionaly
 	QPixmap icon;
 	if (Config::instance()->showCoverArt() && m_coverArt->hasCoverArt()) {

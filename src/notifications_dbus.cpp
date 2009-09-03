@@ -61,5 +61,5 @@ bool Notifications::notifyDBus(const QString &text) {
 }
 
 QList<Notifications::Type> Notifications::notifiers() {
-	return QList<Type>() << CUSTOM << FREEDESKTOP;
+	return QList<Type>() << CUSTOM << FREEDESKTOP << NATIVE;
 }

@@ -105,7 +105,7 @@ HEADERS += src/aafilter.h \
     src/timelabel.h \
     src/timeslider.h \
     src/trayicon.h \
-	src/traysonginfo.h \
+    src/traysonginfo.h \
     src/verticalbutton.h \
     src/lastfmsubmitter.h
 
@@ -148,6 +148,7 @@ SOURCES += src/aafilter.cpp \
     src/mpdstats.cpp \
     src/mpdstatus.cpp \
     src/notifications.cpp \
+	src/notifications_native.cpp \
     src/passivepopup.cpp \
     src/pausabletimer.cpp \
     src/playlistitemdelegate.cpp \

@@ -39,5 +39,5 @@ bool Notifications::notifyDBus(const QString &)
 
 QList<Notifications::Type> Notifications::notifiers()
 {
-	return QList<Type>() << CUSTOM;
+	return QList<Type>() << CUSTOM << NATIVE;
 }

@@ -171,9 +171,6 @@ void TrayIcon::setSong(const MPDSong &s) {
 	}
 
 
-#ifdef Q_DARWIN
-	showMessage("QMPDClient", expandMacro(s, Config::instance()->playlistPattern()));
-#else
 #ifndef Q_WS_X11
 	// Win32 and OSX does not seem to support richtext in tooltips
 	setToolTip(expandMacros(s, Config::instance()->playlistPattern()));
@@ -206,7 +203,6 @@ void TrayIcon::setSong(const MPDSong &s) {
 	tooltip += "</table></body></html>";
 
 	setToolTip(tooltip.arg(rows).arg(NAMEVER));
-#endif
 #endif
 }
 
