@@ -17,23 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "config.h"
 #include "debug.h"
 #include "notifications.h"
-#include "passivepopup.h"
 #include "richtext.h"
-#include "coverartdialog.h"
+
 #include <QApplication>
 #include <QDesktopWidget>
 
-QString Notifications::name(Type t) {
-	switch (t) {
-		case FREEDESKTOP:
-			return "Freedesktop";
-		case NATIVE:
-			return "Native";
-		default:
-			return "QMPDClient";
+Notifications::Notifications(QObject* parent) : QObject(parent) {
+	setObjectName("notifications");
+	connect(MPD::instance(), SIGNAL(playingSongUpdated(const MPDSong &)), this, SLOT(setSong(const MPDSong &)));
+}
+
+
+
+void Notifications::notify(const QString &text) {
+	NotificationModule* notifyModule = module((Type)Config::instance()->notifier());
+	if(notifyModule != 0) {
+		if(notifyModule->notify(text)) return;
+		qWarning((notifyModule->name() + " notify failed.").toLatin1());
 	}
 }
 
@@ -42,48 +44,12 @@ QString Notifications::makeTitle(const MPDSong &s) {
 	QString title = elideRichText("", s.title().isEmpty() ? s.filename() : s.title()  , "", desktopWidth / 2) + "\n";
 	QString artist = elideRichText("", s.artist(), "", desktopWidth / 4);
 	QString album = elideRichText("", s.album(), "", desktopWidth / 4);
-	
+
 	if (!artist.isEmpty())
 		title += artist + "\n";
 	if (!album.isEmpty())
 		title += album;
 	return title;
-}
-
-void Notifications::notify(const QString &text) {
-	if (Config::instance()->notifier() == FREEDESKTOP && m_dbus) {
-		m_dbus = notifyDBus(text);
-		if (m_dbus) { // DBus notify succeeded
-			return;
-		} else {
-        	qWarning("DBus notify failed, falling back to custom notifier.");
-		} 
-	} else if(Config::instance()->notifier() == NATIVE) {
-		if(notifyNative(text)) {
-			return;
-		} else {
-			qWarning("Native notfiy failed, falling back to custom notifier.");
-		}
-	}
-	
-	if(!notifyCustom(text)) {
-		qWarning("Custon notify failed. Strange.");
-	}
-}
-
-bool Notifications::notifyCustom(const QString& text) {
-	// TODO: height and width set optionaly
-	QPixmap icon;
-	if (Config::instance()->showCoverArt() && m_coverArt->hasCoverArt()) {
-		icon = m_coverArt->coverArt();
-		if (icon.height() > 64) icon = icon.scaledToHeight(64, Qt::SmoothTransformation);
-		if (icon.width() > 64) icon = icon.scaledToWidth(64, Qt::SmoothTransformation);
-	} else {
-		icon = QPixmap(":/icons/qmpdclient48.png");
-	}
-
-	PassivePopup::Position pos = static_cast<PassivePopup::Position>(Config::instance()->notificationsPosition());
-	new PassivePopup("QMPDClient", text, icon, pos, Config::instance()->notificationsTimeout());
 }
 
 void Notifications::setSong(const MPDSong &s) {
@@ -93,8 +59,59 @@ void Notifications::setSong(const MPDSong &s) {
 	}
 	if(!s.isNull())
 	{
-		m_coverArt->setSong(s);
 		notify(makeTitle(s));
 	}
 	m_previousSong = s;
 }
+
+QList<NotificationModule*>* Notifications::moduleList() {
+	static QList<NotificationModule*> modules;
+
+	if(modules.isEmpty()) {
+		setupModulesList(&modules);
+	}
+	return &modules;
+}
+
+void Notifications::setupModulesList(QList<NotificationModule*>* list) {
+	list->append(new NotificationModuleCustom(qApp));
+	list->append(new NotificationModuleNative(qApp));
+
+#ifdef DBUS_NOTIFICATIONS
+	list->append(new NotificationModuleDbus(qApp));
+#endif
+
+#ifdef Q_WS_WIN
+	list->append(new NotificationModuleGfW(qApp));
+#endif
+
+}
+
+QList<Notifications::Type> Notifications::notifiers() {
+	QList<Type> result = QList<Type>();
+	for (int i = 0; i < moduleList()->size(); ++i)
+		  result << moduleList()->at(i)->type();
+
+	return result;
+}
+
+QString Notifications::name(Type t) {
+	for(int i = 0; i < moduleList()->size(); ++i) {
+		NotificationModule* current = moduleList()->at(i);
+		if(current->type() == t)
+			return current->name();
+	}
+
+	return "";
+}
+
+NotificationModule* Notifications::module(Type t) {
+	for(int i = 0; i < moduleList()->size(); ++i) {
+		NotificationModule* current = moduleList()->at(i);
+		if(current->type() == t)
+			return current;
+	}
+	return 0;
+}
+
+

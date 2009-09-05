@@ -2,12 +2,13 @@
 PREFIX = /usr/local
 
 # Most people need not muck about below here
-#!contains(QT_MAJOR_VERSION, 4):error(QMPDClient requires Qt 4)
+# !contains(QT_MAJOR_VERSION, 4):error(QMPDClient requires Qt 4)
 CONFIG += qt
 
 # addition ldflags for release build
-QMAKE_LFLAGS_RELEASE += -O2 -g0 -s
-
+QMAKE_LFLAGS_RELEASE += -O2 \
+    -g0 \
+    -s
 CONFIG -= debug # Needed to avoid console on win32
 TEMPLATE = app
 RESOURCES = qmpdclient.qrc
@@ -17,7 +18,6 @@ DEFINES += NAMEVER='"\\"QMPDClient \
 DEFINES += VERSION='"\\"$$VERSION\\""'
 INCLUDEPATH += src
 QT += network
-
 FORMS += ui/aboutdialog.ui \
     ui/addradiodialog.ui \
     ui/controlpanel.ui \
@@ -32,7 +32,6 @@ FORMS += ui/aboutdialog.ui \
     ui/preferencesdialog.ui \
     ui/radiopanel.ui \
     ui/lyricsdialog.ui
-
 HEADERS += src/aafilter.h \
     src/aboutdialog.h \
     src/abstractmodel.h \
@@ -78,6 +77,8 @@ HEADERS += src/aafilter.h \
     src/mpdstats.h \
     src/mpdstatus.h \
     src/notifications.h \
+    src/notifications_custom.h \
+    src/notifications_native.h \
     src/passivepopup.h \
     src/pausabletimer.h \
     src/playlistitemdelegate.h \
@@ -107,8 +108,11 @@ HEADERS += src/aafilter.h \
     src/trayicon.h \
     src/traysonginfo.h \
     src/verticalbutton.h \
-    src/lastfmsubmitter.h
-
+    src/lastfmsubmitter.h \
+    src/notifications_native.h \
+    src/notifications_dbus.h \
+    src/notifications_gfw.h \
+    src/notifications_custom.h
 SOURCES += src/aafilter.cpp \
     src/aboutdialog.cpp \
     src/abstractmodel.cpp \
@@ -148,7 +152,6 @@ SOURCES += src/aafilter.cpp \
     src/mpdstats.cpp \
     src/mpdstatus.cpp \
     src/notifications.cpp \
-	src/notifications_native.cpp \
     src/passivepopup.cpp \
     src/pausabletimer.cpp \
     src/playlistitemdelegate.cpp \
@@ -175,67 +178,84 @@ SOURCES += src/aafilter.cpp \
     src/timelabel.cpp \
     src/timeslider.cpp \
     src/trayicon.cpp \
-	src/traysonginfo.cpp \
+    src/traysonginfo.cpp \
     src/verticalbutton.cpp \
     src/lastfmsubmitter.cpp
 
 # translations
 LANG_PATH = $$PWD/lang
-TRANSLATIONS = $$LANG_PATH/ru_RU.ts $$LANG_PATH/de_DE.ts  $$LANG_PATH/it_IT.ts  $$LANG_PATH/nn_NO.ts $$LANG_PATH/pt_BR.ts  $$LANG_PATH/sv_SE.ts  $$LANG_PATH/uk_UA.ts  $$LANG_PATH/zh_TW.ts $$LANG_PATH/fr_FR.ts $$LANG_PATH/nl_NL.ts $$LANG_PATH/no_NO.ts   $$LANG_PATH/tr_TR.ts  $$LANG_PATH/zh_CN.ts $$LANG_PATH/cs_CZ.ts
-
+TRANSLATIONS = $$LANG_PATH/ru_RU.ts \
+    $$LANG_PATH/de_DE.ts \
+    $$LANG_PATH/it_IT.ts \
+    $$LANG_PATH/nn_NO.ts \
+    $$LANG_PATH/pt_BR.ts \
+    $$LANG_PATH/sv_SE.ts \
+    $$LANG_PATH/uk_UA.ts \
+    $$LANG_PATH/zh_TW.ts \
+    $$LANG_PATH/fr_FR.ts \
+    $$LANG_PATH/nl_NL.ts \
+    $$LANG_PATH/no_NO.ts \
+    $$LANG_PATH/tr_TR.ts \
+    $$LANG_PATH/zh_CN.ts \
+    $$LANG_PATH/cs_CZ.ts
 MOC_DIR = .moc
 OBJECTS_DIR = .obj
 RCC_DIR = .res
 UI_DIR = .ui
 
 # Platform specific
-win32 {
+win32 { 
     debug:CONFIG += console
     LIBS += -lws2_32
     RC_FILE = icons/resource.rc
-    SOURCES += src/qmpdclient_win.cpp \
-        src/notifications_nodbus.cpp
+    SOURCES += src/qmpdclient_win.cpp
+    HEADERS += src/notifications_gfw.h
 }
 
 # Installation in done through own installer on win32
-unix {
-    !mac {
+unix { 
+    !mac { 
         SOURCES += src/qmpdclient_x11.cpp
-
+        
         # Check for dbus support
-        contains(QT_CONFIG, dbus) {
+        contains(QT_CONFIG, dbus) { 
             message(DBus notifier: enabled)
             CONFIG += qdbus
-            SOURCES += src/notifications_dbus.cpp
+	    DEFINES += DBUS_NOTIFICATIONS
+            SOURCES += 
+	    HEADERS += src\notifications_dbus.h
         }
-        else {
+        else { 
             message(DBus notifier: disabled (Qt is not compiled with dbus support))
-            SOURCES += src/notifications_nodbus.cpp
+            SOURCES += 
         }
     }
-    mac {
+    mac { 
         RC_FILE = icons/qmpdclient.icns
-        SOURCES += src/qmpdclient_mac.cpp \
-            src/notifications_nodbus.cpp
+        SOURCES += src/qmpdclient_mac.cpp
     }
     DEFINES += PREFIX='"\\"$$PREFIX\\""'
     TARGET = qmpdclient
     INSTALLS += target
     target.path = $$PREFIX/bin
 }
-unix {
-	desktop_file.files = qmpdclient.desktop
-	desktop_file.path = $$PREFIX/share/applications
-	icons.files = icons/qmpdclient64.png
-	icons.path = $$PREFIX/share/icons
-	INSTALLS += desktop_file icons
+unix { 
+    desktop_file.files = qmpdclient.desktop
+    desktop_file.path = $$PREFIX/share/applications
+    icons.files = icons/qmpdclient64.png
+    icons.path = $$PREFIX/share/icons
+    INSTALLS += desktop_file \
+        icons
 }
-translations.commands = lrelease $$TRANSLATIONS
+translations.commands = lrelease \
+    $$TRANSLATIONS
 translations.files = lang/*.qm
 translations.path = $$PREFIX/share/QMPDClient/translations
-
 INSTALLS += translations
 
 # update translations (make translate)
 QMAKE_EXTRA_TARGETS += translate
-translate.commands = lupdate $$PWD/qmpdclient.pro -ts $$TRANSLATIONS;
+translate.commands = lupdate \
+    $$PWD/qmpdclient.pro \
+    -ts \
+    $$TRANSLATIONS;

@@ -20,13 +20,14 @@
 #ifndef NOTIFICATIONS_H
 #define NOTIFICATIONS_H
 
-#include "coverartdialog.h"
+#include "config.h"
+#include "mpd.h"
 #include "mpdsong.h"
 
 #include <QObject>
 
 class QDBusInterface;
-class CoverArtDialog;
+class NotificationModule;
 
 class Notifications
 	: public QObject
@@ -35,24 +36,45 @@ class Notifications
 
 public:
 	Notifications(QObject *);
-	enum Type { CUSTOM = 0, FREEDESKTOP = 1, NATIVE = 2 };
+	enum Type { CUSTOM = 0, FREEDESKTOP = 1, NATIVE = 2, GfW = 3 };
+
 	static QList<Type> notifiers();
 	static QString name(Type);
+	static NotificationModule* module(Type t);
 
 private slots:
 	void setSong(const MPDSong &);
 
 private:
-	bool notifyDBus(const QString &);
-	bool notifyCustom(const QString &);
-	bool notifyNative(const QString &);
 	void notify(const QString &);
 	QString makeTitle(const MPDSong &);
 
-	bool m_dbus;
-	QDBusInterface *m_interface;
+	static QList<NotificationModule*>* moduleList();
+	static void setupModulesList(QList<NotificationModule*>* list);
+
+private:
 	MPDSong m_previousSong;
-	CoverArtDialog *m_coverArt;
 };
+
+class NotificationModule
+	: public QObject
+{
+	Q_OBJECT
+
+public:
+	NotificationModule(QObject* parent) : QObject(parent) {}
+	virtual QString name() const = 0;
+	virtual Notifications::Type type() const = 0;
+	virtual bool notify(const QString&) = 0;
+};
+
+#include "notifications_custom.h"
+#include "notifications_native.h"
+#ifdef DBUS_NOTIFICATIONS
+	#include "notifications_dbus.h"
+#endif
+#ifdef Q_WS_WIN
+	#include "notifications_gfw.h"
+#endif
 
 #endif
