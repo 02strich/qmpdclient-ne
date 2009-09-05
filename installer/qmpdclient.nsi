@@ -41,6 +41,7 @@ Section "QMPDClient (required)"
   File "QtCore4.dll"
   File "QtGui4.dll"
   File "QtNetwork4.dll"
+  File "growlnotify.exe"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\QMPDClient "Install_Dir" "$INSTDIR"
@@ -79,6 +80,7 @@ Section "Uninstall"
   Delete $INSTDIR\QtCore4.dll
   Delete $INSTDIR\QtGui4.dll
   Delete $INSTDIR\QtNetwork4.dll
+  Delete $INSTDIR\growlnotify.exe
   Delete $INSTDIR\uninstall.exe
 
   ; Remove shortcuts, if any
