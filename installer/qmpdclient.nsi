@@ -38,9 +38,11 @@ Section "QMPDClient (required)"
   ; Put file there
   File "qmpdclient.exe"
   File "mingwm10.dll"
+  File "libgcc_s_dw2-1.dll"
   File "QtCore4.dll"
   File "QtGui4.dll"
   File "QtNetwork4.dll"
+  File "QtXmlPatterns4.dll"
   File "growlnotify.exe"
   
   ; Write the installation path into the registry
@@ -77,9 +79,11 @@ Section "Uninstall"
   ; Remove files and uninstaller
   Delete $INSTDIR\qmpdclient.exe
   Delete $INSTDIR\mingwm10.dll
+  Delete $INSTDIR\libgcc_s_dw2-1.dll
   Delete $INSTDIR\QtCore4.dll
   Delete $INSTDIR\QtGui4.dll
   Delete $INSTDIR\QtNetwork4.dll
+  Delete $INSTDIR\QtXmlPatterns4.dll
   Delete $INSTDIR\growlnotify.exe
   Delete $INSTDIR\uninstall.exe
 
