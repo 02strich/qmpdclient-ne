@@ -2,8 +2,9 @@
 PREFIX = /usr/local
 
 # Most people need not muck about below here
+#!contains(QT_MAJOR_VERSION, 4):error(QMPDClient requires Qt 4)
 # !contains(QT_MAJOR_VERSION, 4):error(QMPDClient requires Qt 4)
-CONFIG += qt
+CONFIG += qt debug
 
 # addition ldflags for release build
 QMAKE_LFLAGS_RELEASE += -O2 \
@@ -12,12 +13,12 @@ QMAKE_LFLAGS_RELEASE += -O2 \
 CONFIG -= debug # Needed to avoid console on win32
 TEMPLATE = app
 RESOURCES = qmpdclient.qrc
-VERSION = 1.1.0
+VERSION = 1.1.2
 DEFINES += NAMEVER='"\\"QMPDClient \
     $$VERSION\\""'
 DEFINES += VERSION='"\\"$$VERSION\\""'
 INCLUDEPATH += src
-QT += network
+QT += network xml xmlpatterns
 FORMS += ui/aboutdialog.ui \
     ui/addradiodialog.ui \
     ui/controlpanel.ui \
@@ -31,6 +32,7 @@ FORMS += ui/aboutdialog.ui \
     ui/playlistspanel.ui \
     ui/preferencesdialog.ui \
     ui/radiopanel.ui \
+    ui/shoutcastpanel.ui \
     ui/lyricsdialog.ui
 HEADERS += src/aafilter.h \
     src/aboutdialog.h \
@@ -85,6 +87,7 @@ HEADERS += src/aafilter.h \
     src/playlistmodel.h \
     src/playlistspanel.h \
     src/playlistsview.h \
+    src/plsfile.h \
     src/preferencesdialog.h \
     src/qmpdclient.h \
     src/playlistpanel.h \
@@ -98,6 +101,11 @@ HEADERS += src/aafilter.h \
     src/servermodel.h \
     src/shortcutmodel.h \
     src/shortcuts.h \
+    src/shoutcastpanel.h \
+    src/shoutcastview.h \
+    src/shoutcastmodel.h \
+    src/shoutcastfetcher.h \
+    src/shoutcaststation.h \
     src/songview.h \
     src/stringlistmodel.h \
     src/stringlistview.h \
@@ -161,6 +169,7 @@ SOURCES += src/aafilter.cpp \
     src/playlistspanel.cpp \
     src/playlistsview.cpp \
     src/plconview.cpp \
+    src/plsfile.cpp \
     src/preferencesdialog.cpp \
     src/qmpdclient.cpp \
     src/radiopanel.cpp \
@@ -170,6 +179,11 @@ SOURCES += src/aafilter.cpp \
     src/servermodel.cpp \
     src/shortcutmodel.cpp \
     src/shortcuts.cpp \
+    src/shoutcastmodel.cpp \
+    src/shoutcastpanel.cpp \
+    src/shoutcastview.cpp \
+    src/shoutcastfetcher.cpp \
+    src/shoutcaststation.cpp \
     src/songview.cpp \
     src/stringlistmodel.cpp \
     src/stringlistview.cpp \
@@ -205,7 +219,7 @@ UI_DIR = .ui
 
 # Platform specific
 win32 { 
-    debug:CONFIG += console
+#   debug:CONFIG += console
     LIBS += -lws2_32
     RC_FILE = icons/resource.rc
     SOURCES += src/qmpdclient_win.cpp
@@ -219,14 +233,15 @@ unix {
         
         # Check for dbus support
         contains(QT_CONFIG, dbus) { 
-            message(DBus notifier: enabled)
+            message(DBus: enabled)
             CONFIG += qdbus
-	    DEFINES += DBUS_NOTIFICATIONS
-            SOURCES += 
-	    HEADERS += src\notifications_dbus.h
+            SOURCES += src/notifications_dbus.cpp \
+            	src/qdbus_adaptor.cpp
+            HEADERS += src/qdbus_adaptor.h
+            DEFINES += WITH_DBUS
         }
         else { 
-            message(DBus notifier: disabled (Qt is not compiled with dbus support))
+            message(DBus: disabled (Qt is not compiled with dbus support))
             SOURCES += 
         }
     }
@@ -255,7 +270,4 @@ INSTALLS += translations
 
 # update translations (make translate)
 QMAKE_EXTRA_TARGETS += translate
-translate.commands = lupdate \
-    $$PWD/qmpdclient.pro \
-    -ts \
-    $$TRANSLATIONS;
+translate.commands = lupdate $$PWD/qmpdclient.pro -ts $$TRANSLATIONS;

@@ -17,46 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QMPDCLIENT_H
-#define QMPDCLIENT_H
+#ifndef SHOUTCASTVIEW_H
+#define SHOUTCASTVIEW_H
 
-#include <QApplication>
-#include <QPointer>
-#include <QSessionManager>
+#include "abstractview.h"
+#include <QTreeView>
 
-class MainWindow;
-class QTranslator;
+class ShoutcastModel;
+class QAction;
 
-class QMPDClient : public QApplication {
+class ShoutcastView : public AbstractTree {
 	Q_OBJECT
 public:
-	QMPDClient(int &, char **);
-	~QMPDClient();
-#ifdef Q_WS_X11
-	bool x11EventFilter(XEvent *);
-#else
-	bool eventFilter(QObject *, QEvent *);
-#endif
-#ifdef Q_WS_WIN
-	bool winEventFilter(MSG *, long *);
-#endif
-	void commitData(QSessionManager & manager);
-
+	ShoutcastView(QWidget *);
 public slots:
-	void toggleMainWindow();
-
+	void updateTranslation();
 private slots:
-	void alternatingChanged(bool);
-	void fontChanged(const QFont &);
-	void iconSetChanged();
-	void localeChanged(const QString &);
-	void opaqueResizeChanged(bool);
+	void expanded(const QModelIndex & expandedItem);
+	void doubleClicked(const QModelIndex & selectedItem);
+protected:
+	virtual void showEvent(QShowEvent * event);
+	virtual MPDSongList selectedSongs() const;
 private:
-	QList<QPointer<QObject> > safeChildren();
-	void grabKeys();
-	void ungrabKeys();
-
-	MainWindow *m_mainWindow;
-	QTranslator *m_translator, *m_qtTranslator;
+	ShoutcastModel *m_model;
+	QAction *m_enqueueAction, *m_informationAction, *m_playAction;
 };
 #endif

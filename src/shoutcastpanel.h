@@ -17,46 +17,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QMPDCLIENT_H
-#define QMPDCLIENT_H
+#ifndef SHOUTCASTPANEL_H
+#define SHOUTCASTPANEL_H
 
-#include <QApplication>
-#include <QPointer>
-#include <QSessionManager>
+#include "ui_shoutcastpanel.h"
 
-class MainWindow;
-class QTranslator;
-
-class QMPDClient : public QApplication {
+class ShoutcastPanel : public QWidget, private Ui::ShoutcastPanel {
 	Q_OBJECT
+
 public:
-	QMPDClient(int &, char **);
-	~QMPDClient();
-#ifdef Q_WS_X11
-	bool x11EventFilter(XEvent *);
-#else
-	bool eventFilter(QObject *, QEvent *);
-#endif
-#ifdef Q_WS_WIN
-	bool winEventFilter(MSG *, long *);
-#endif
-	void commitData(QSessionManager & manager);
+	ShoutcastPanel();
 
 public slots:
-	void toggleMainWindow();
-
-private slots:
-	void alternatingChanged(bool);
-	void fontChanged(const QFont &);
-	void iconSetChanged();
-	void localeChanged(const QString &);
-	void opaqueResizeChanged(bool);
-private:
-	QList<QPointer<QObject> > safeChildren();
-	void grabKeys();
-	void ungrabKeys();
-
-	MainWindow *m_mainWindow;
-	QTranslator *m_translator, *m_qtTranslator;
+	void updateTranslation();
 };
 #endif

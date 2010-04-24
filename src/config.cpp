@@ -26,9 +26,7 @@
 #include <QDir>
 #include <QFile>
 #include <QLocale>
-#ifdef Q_WS_WIN
-#include <windows.h>
-#endif
+#include <QCoreApplication>
 
 Config* Config::m_instance = 0;
 
@@ -42,16 +40,13 @@ Config::Config() :
 	m_cachePath = fileName().section('/', 0, -2, QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep) + "/";
 
 	// Path for system wide, and user's data files
+	QString execPath = QCoreApplication::applicationDirPath();
+	QString prefix = execPath.section("/", 0, -2);
 #ifdef Q_WS_WIN
-	wchar_t absfn[_MAX_PATH];
-	GetModuleFileNameW(NULL, absfn, sizeof(absfn) - 1);
-	m_systemPath = QString::fromWCharArray(absfn);
-	m_systemPath = m_systemPath.section("\\", 0, -2);
-	m_systemPath.replace("\\", "/");
-	m_systemPath += "/";
+	m_systemPath = execPath;
 	m_userPath = m_cachePath;
 #else
-	m_systemPath = QString(PREFIX) + "/share/QMPDClient/";
+	m_systemPath = prefix + "/share/QMPDClient/";
 	m_userPath = QDir::homePath() + "/.local/share/QMPDClient/";
 #endif
 	setObjectName("config");
@@ -386,11 +381,17 @@ QString Config::locale() const {
 QString Config::localeFile() const {
 	const QString tmp = locale();
 	if (tmp.isEmpty()) {
-		const QString filename = QLocale::system().name() + ".qm";
-		const QDir systemDir(systemPath() + "translations", "??_??.qm");
+		QString filename = QLocale::system().name() + ".qm";
+		const QDir systemDir(systemPath() + "translations", "*.qm");
 		if (systemDir.entryList(QDir::Files | QDir::Readable).contains(filename))
 			return systemDir.absolutePath() + "/" + filename;
-		const QDir userDir(userPath() + "translations", "??_??.qm");
+		const QDir userDir(userPath() + "translations", "*.qm");
+		if (userDir.entryList(QDir::Files | QDir::Readable).contains(filename))
+			return userDir.absolutePath() + "/" + filename;
+		// If failed, try to find language only
+		filename = QLocale::system().name().left(2) + ".qm";
+		if (systemDir.entryList(QDir::Files | QDir::Readable).contains(filename))
+			return systemDir.absolutePath() + "/" + filename;
 		if (userDir.entryList(QDir::Files | QDir::Readable).contains(filename))
 			return userDir.absolutePath() + "/" + filename;
 	}

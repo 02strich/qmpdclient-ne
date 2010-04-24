@@ -17,46 +17,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QMPDCLIENT_H
-#define QMPDCLIENT_H
+#ifndef SHOUTCASTMODEL_H
+#define SHOUTCASTMODEL_H
 
-#include <QApplication>
+class QShowEvent;
+class ShoutcastFetcher;
+#include "shoutcaststation.h"
+#include "abstractmodel.h"
+#include <QStandardItemModel>
 #include <QPointer>
-#include <QSessionManager>
+class MPDSongList;
+class MPDSong;
+class QMimeData;
 
-class MainWindow;
-class QTranslator;
-
-class QMPDClient : public QApplication {
+class ShoutcastModel : public QStandardItemModel, public AbstractModel {
 	Q_OBJECT
 public:
-	QMPDClient(int &, char **);
-	~QMPDClient();
-#ifdef Q_WS_X11
-	bool x11EventFilter(XEvent *);
-#else
-	bool eventFilter(QObject *, QEvent *);
-#endif
-#ifdef Q_WS_WIN
-	bool winEventFilter(MSG *, long *);
-#endif
-	void commitData(QSessionManager & manager);
-
-public slots:
-	void toggleMainWindow();
+	enum
+	{
+		StationRole = Qt::UserRole + 1
+	};
+	ShoutcastModel(QObject *parent = 0);
+	void downloadGenres();
+	void downloadStationsForGenre(const QString & genre);
+	void downloadPlaylistForStation(const ShoutcastStation & station);
+	MPDSongList songs(const QModelIndexList & list) const;
+	virtual QMimeData *mimeData(const QModelIndexList &indexes) const;
 
 private slots:
-	void alternatingChanged(bool);
-	void fontChanged(const QFont &);
-	void iconSetChanged();
-	void localeChanged(const QString &);
-	void opaqueResizeChanged(bool);
+	void genresAvailable();
+	void newStationsAvailable(const QString & keyWord);
+	void playlistAvailable(const ShoutcastStation & station);
 private:
-	QList<QPointer<QObject> > safeChildren();
-	void grabKeys();
-	void ungrabKeys();
-
-	MainWindow *m_mainWindow;
-	QTranslator *m_translator, *m_qtTranslator;
+	ShoutcastFetcher * m_fetcher;
 };
+
 #endif

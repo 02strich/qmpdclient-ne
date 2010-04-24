@@ -35,6 +35,7 @@
 #include "richtext.h"
 #include "serverinfo.h"
 #include "shortcuts.h"
+#include "shoutcastpanel.h"
 #include "trayicon.h"
 #include <QCloseEvent>
 #include <QDesktopWidget>
@@ -66,6 +67,7 @@ MainWindow::MainWindow() : QMainWindow(0) {
 	m_libraryTab = rightBar->addPanel(m_libraryPanel = new LibraryPanel);
 	m_directoriesTab = rightBar->addPanel(new DirectoryPanel);
 	m_radioTab = rightBar->addPanel(new RadioPanel);
+	m_shoutcastTab = rightBar->addPanel(new ShoutcastPanel);
 	m_playlistsTab = rightBar->addPanel(new PlaylistsPanel);
 
 	// For icon changes
@@ -74,6 +76,7 @@ MainWindow::MainWindow() : QMainWindow(0) {
 	m_playlistTab->setObjectName("playlistTab");
 	m_playlistsTab->setObjectName("playlistsTab");
 	m_directoriesTab->setObjectName("directoriesTab");
+	m_shoutcastTab->setObjectName("shoutcastTab");
 
 	// Signals and slots
 	connect(MPDConnection::instance(), SIGNAL(connected(const ServerInfo &)), this, SLOT(connectionChanged()));
@@ -114,7 +117,7 @@ MainWindow::MainWindow() : QMainWindow(0) {
 	serverListChanged(Config::instance()->servers());
 	splitter->restore(Config::instance()->mainSplitterSizes());
 	resize(Config::instance()->windowSize());
-	if (!m_trayIcon->isVisible() || !Config::instance()->trayIconEnabled() || !Config::instance()->startHidden())
+	if (!m_trayIcon->isVisible() || !Config::instance()->trayIconEnabled() || !Config::instance()->startHidden() || !Config::instance()->minimizeToTray())
 		show();
 	rightStack->setCurrentIndex(Config::instance()->rightBarTab());
 }
@@ -127,12 +130,14 @@ void MainWindow::updateTranslation() {
 	Q_ASSERT(m_directoriesTab);
 	Q_ASSERT(m_radioTab);
 	Q_ASSERT(m_playlistsTab);
+	Q_ASSERT(m_shoutcastTab);
 	Q_ASSERT(m_hideKey);
 	m_playlistTab->setText(tr("&Playlist"));
 	m_libraryTab->setText(tr("&Library"));
 	m_directoriesTab->setText(tr("&Directories"));
 	m_radioTab->setText(tr("&Internet Radio"));
 	m_playlistsTab->setText(tr("Pla&ylists"));
+	m_shoutcastTab->setText(tr("&Shoutcast Directory"));
 	m_hideKey->setWhatsThis(tr("Minimize to tray"));
 	setStats(m_stats);
 }
@@ -235,19 +240,13 @@ void MainWindow::setStats(const MPDStats &stats) {
 	const int hour = secs / (60 * 60);
 	secs -= hour * 60 * 60;
 	const int min = secs / 60;
-	m_statsLabel->setText(tr("Library:  %1 %2, %3 %4, %5 %6. (%7 %8 %9 %10 %11 %12) ")
-						  .arg(stats.numberOfArtists())
-						  .arg(tr("artists"))
-						  .arg(stats.numberOfAlbums())
-						  .arg(tr("albums"))
-						  .arg(stats.numberOfSongs())
-						  .arg(tr("songs"))
-						  .arg(day)
-						  .arg(tr("days"))
-						  .arg(hour)
-						  .arg(tr("hours"))
-						  .arg(min)
-						  .arg(tr("minutes")));
+	m_statsLabel->setText(tr("Library:  %1, %2, %3. (%4 %5 %6 ) ")
+						  .arg(tr("%n artists","",stats.numberOfArtists()))
+						  .arg(tr("%n albums","",stats.numberOfAlbums()))
+						  .arg(tr("%n songs","",stats.numberOfSongs()))
+						  .arg(tr("%n days","",day))
+						  .arg(tr("%n hours","",hour))
+						  .arg(tr("%n minutes","",min)));
 	m_stats = stats;
 }
 
@@ -329,7 +328,7 @@ void MainWindow::playlistUpdated(const MPDSongList &list)
 	unsigned long tsecs = 0;
 	for(MPDSongList::const_iterator it = list.constBegin(); it != list.constEnd(); ++it)
 	{
-		tsecs+=(*it).secs();
+		tsecs+=abs((*it).secs());
 	}
 	const int day = tsecs / (60 * 60 * 24);
 	tsecs -= day * 60 * 60 * 24;
@@ -338,9 +337,9 @@ void MainWindow::playlistUpdated(const MPDSongList &list)
 	const int min = tsecs / 60;
 	tsecs -= min*60;
 	QString txt = tr("Playlist: ");
-	if(day) txt += tr("%1 days, ").arg(day);
-	if(hour) txt += tr("%1 hours, ").arg(hour);
-	if(min) txt += tr("%1 minutes, ").arg(min);
-	txt += tr("%1 seconds.").arg(tsecs);
+	if(day) txt += tr("%n days, ","",day);
+	if(hour) txt += tr("%n hours, ","",hour);
+	if(min) txt += tr("%n minutes, ","",min);
+	txt += tr("%n seconds.","",tsecs);
 	m_playlistStatsLabel->setText(txt);
 }

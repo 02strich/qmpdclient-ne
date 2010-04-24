@@ -552,6 +552,10 @@
         <translation>Найти текущую песню в библиотеке...</translation>
     </message>
     <message>
+        <source>Ctrl+O</source>
+        <translation></translation>
+    </message>
+    <message>
         <source>Library:  %1 %2, %3 %4, %5 %6. (%7 %8 %9 %10 %11 %12) </source>
         <translation>Библиотека: %1 %2, %3 %4, %5 %6. (%7 %8 %9 %10 %11 %12) </translation>
     </message>
@@ -574,10 +578,6 @@
     <message>
         <source>%1 seconds.</source>
         <translation>%1 секунд.</translation>
-    </message>
-    <message>
-        <source>Ctrl+O</source>
-        <translation></translation>
     </message>
 </context>
 <context>
@@ -1212,6 +1212,10 @@ Overwrite?</source>
         <translation>&amp;Закрыть</translation>
     </message>
     <message>
+        <source>Last.Fm</source>
+        <translation></translation>
+    </message>
+    <message>
         <source>&amp;Fill up playlist with random songs</source>
         <translation>&amp;Заполнить список случайными композициями</translation>
     </message>
@@ -1273,31 +1277,31 @@ Overwrite?</source>
     </message>
     <message>
         <source>Submit played tracks to Last.Fm</source>
-        <translation type="obsolete">Передавать проигранные треки на Last.Fm</translation>
+        <translation>Передавать проигранные треки на Last.Fm</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation type="obsolete">Пароль</translation>
+        <translation>Пароль</translation>
     </message>
     <message>
         <source>Plain</source>
-        <translation type="obsolete">Открытым текстом</translation>
+        <translation>Открытым текстом</translation>
     </message>
     <message>
         <source>MD5</source>
-        <translation type="obsolete">MD5</translation>
+        <translation>MD5</translation>
     </message>
     <message>
         <source>Calculate MD5</source>
-        <translation type="obsolete">Вычислить MD5</translation>
+        <translation>Вычислить MD5</translation>
     </message>
     <message>
         <source>Timer</source>
-        <translation type="obsolete">Таймер</translation>
+        <translation>Таймер</translation>
     </message>
     <message>
         <source>Percent of song played:</source>
-        <translation type="obsolete">Процентов от песни проиграно:</translation>
+        <translation>Процентов от песни проиграно:</translation>
     </message>
 </context>
 <context>
