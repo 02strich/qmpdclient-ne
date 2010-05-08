@@ -1,4 +1,4 @@
-/*
+﻿/*
  * QMPDClient - An MPD client written in Qt 4.
  * Copyright (C) 2005-2008 Håvard Tautra Knutsen <havtknut@tihlde.org>
  *
@@ -30,13 +30,11 @@
 
 Config* Config::m_instance = 0;
 
-Config::Config() :
-#ifndef Q_WS_X11
-		QSettings(IniFormat, UserScope, "QMPDClient", "QMPDClient") {
-#else
-		QSettings("QMPDClient", "QMPDClient") {
-#endif
-	// Path for cache
+Config::Config() {
+
+        // determine wether to use portable config or not.
+
+        // Path for cache
 	m_cachePath = fileName().section('/', 0, -2, QString::SectionSkipEmpty | QString::SectionIncludeLeadingSep) + "/";
 
 	// Path for system wide, and user's data files
@@ -54,7 +52,16 @@ Config::Config() :
 
 Config *Config::instance() {
 	if (!m_instance) {
-		m_instance = new Config;
+                // configure QSettings
+                QSettings::setDefaultFormat(QSettings::IniFormat);
+
+                // check for portable config
+                QDir execPath = QDir(QCoreApplication::applicationDirPath());
+                if(execPath.exists("portable.conf")) {
+                    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, execPath.absolutePath());
+                }
+
+                m_instance = new Config();
 		IconManager::update();
 	}
 	return m_instance;

@@ -9,3 +9,5 @@
 /qmpdclient
 /lang/*.qm
 build
+/debug
+/release
