@@ -13,7 +13,7 @@ QMAKE_LFLAGS_RELEASE += -O2 \
 CONFIG -= debug # Needed to avoid console on win32
 TEMPLATE = app
 RESOURCES = qmpdclient.qrc
-VERSION = 1.1.2
+VERSION = 1.1.3
 DEFINES += NAMEVER='"\\"QMPDClient \
     $$VERSION\\""'
 DEFINES += VERSION='"\\"$$VERSION\\""'
@@ -24,7 +24,6 @@ FORMS += ui/aboutdialog.ui \
     ui/controlpanel.ui \
     ui/coverartdialog.ui \
     ui/directorypanel.ui \
-    ui/jumptosongdialog.ui \
     ui/librarypanel.ui \
     ui/mainwindow.ui \
     ui/metainfodialog.ui \
@@ -57,7 +56,6 @@ HEADERS += src/aafilter.h \
     src/iconmanager.h \
     src/idealbar.h \
     src/idealsplitter.h \
-    src/jumptosongdialog.h \
     src/libmpdclient.h \
     src/librarypanel.h \
     src/lineedit.h \
@@ -141,7 +139,6 @@ SOURCES += src/aafilter.cpp \
     src/iconmanager.cpp \
     src/idealbar.cpp \
     src/idealsplitter.cpp \
-    src/jumptosongdialog.cpp \
     src/libmpdclient.c \
     src/librarypanel.cpp \
     src/lineedit.cpp \
