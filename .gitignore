@@ -11,3 +11,6 @@
 build
 /debug
 /release
+Thumbs.db
+/object_script.qmpdclient.*
+/installer/*.zip

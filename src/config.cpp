@@ -87,7 +87,7 @@ QString Config::userPath() const {
 void Config::setServers(const QList<ServerInfo> &servers) {
 	QVariantList res;
 	foreach(ServerInfo s, servers) {
-		res << "Name: " + s.name() << "Address: " + s.address() << QString("Port: %1").arg(s.port()) << "Password: " + s.password();
+            res << "Name: " + s.name() << "Address: " + s.address() << QString("Port: %1").arg(s.port()) << "Password: " + s.password() << "Streaming: " + s.streamingURL();
 	}
 	setValue("/mpd/serverlist", res);
 	emit serverListChanged(servers);
@@ -109,7 +109,8 @@ QList<ServerInfo> Config::servers() const {
 		ServerInfo si(vl.at(i).toString().remove(0, 6),
 		              vl.at(i+1).toString().remove(0, 9),
 		              vl.at(i+2).toString().remove(0, 6).toInt(),
-		              vl.at(i+3).toString().remove(0, 10));
+                              vl.at(i+3).toString().remove(0, 10),
+                              vl.at(i+4).toString().remove(0, 11));
 		res << si;
 	}
 	return res;

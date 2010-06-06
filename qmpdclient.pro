@@ -2,9 +2,10 @@
 PREFIX = /usr/local
 
 # Most people need not muck about below here
-#!contains(QT_MAJOR_VERSION, 4):error(QMPDClient requires Qt 4)
 # !contains(QT_MAJOR_VERSION, 4):error(QMPDClient requires Qt 4)
-CONFIG += qt debug
+# !contains(QT_MAJOR_VERSION, 4):error(QMPDClient requires Qt 4)
+CONFIG += qt \
+    debug
 
 # addition ldflags for release build
 QMAKE_LFLAGS_RELEASE += -O2 \
@@ -14,11 +15,13 @@ CONFIG -= debug # Needed to avoid console on win32
 TEMPLATE = app
 RESOURCES = qmpdclient.qrc
 VERSION = 1.1.3
-DEFINES += NAMEVER='"\\"QMPDClient \
-    $$VERSION\\""'
+DEFINES += NAMEVER='"\\"QMPDClient $$VERSION\\""'
 DEFINES += VERSION='"\\"$$VERSION\\""'
 INCLUDEPATH += src
-QT += network xml xmlpatterns
+QT += network \
+    xml \
+    xmlpatterns \
+    phonon
 FORMS += ui/aboutdialog.ui \
     ui/addradiodialog.ui \
     ui/controlpanel.ui \
@@ -118,7 +121,8 @@ HEADERS += src/aafilter.h \
     src/notifications_native.h \
     src/notifications_dbus.h \
     src/notifications_gfw.h \
-    src/notifications_custom.h
+    src/notifications_custom.h \
+    src/localplayback.h
 SOURCES += src/aafilter.cpp \
     src/aboutdialog.cpp \
     src/abstractmodel.cpp \
@@ -191,7 +195,8 @@ SOURCES += src/aafilter.cpp \
     src/trayicon.cpp \
     src/traysonginfo.cpp \
     src/verticalbutton.cpp \
-    src/lastfmsubmitter.cpp
+    src/lastfmsubmitter.cpp \
+    src/localplayback.cpp
 
 # translations
 LANG_PATH = $$PWD/lang
@@ -216,7 +221,7 @@ UI_DIR = .ui
 
 # Platform specific
 win32 { 
-#   debug:CONFIG += console
+    # debug:CONFIG += console
     LIBS += -lws2_32
     RC_FILE = icons/resource.rc
     SOURCES += src/qmpdclient_win.cpp
@@ -233,7 +238,7 @@ unix {
             message(DBus: enabled)
             CONFIG += qdbus
             SOURCES += src/notifications_dbus.cpp \
-            	src/qdbus_adaptor.cpp
+                src/qdbus_adaptor.cpp
             HEADERS += src/qdbus_adaptor.h
             DEFINES += WITH_DBUS
         }
@@ -267,4 +272,7 @@ INSTALLS += translations
 
 # update translations (make translate)
 QMAKE_EXTRA_TARGETS += translate
-translate.commands = lupdate $$PWD/qmpdclient.pro -ts $$TRANSLATIONS;
+translate.commands = lupdate \
+    $$PWD/qmpdclient.pro \
+    -ts \
+    $$TRANSLATIONS;

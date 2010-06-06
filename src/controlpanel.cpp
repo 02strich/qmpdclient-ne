@@ -26,6 +26,7 @@
 #include "mpdconnection.h"
 #include "mpdsong.h"
 #include "richtext.h"
+#include "localplayback.h"
 #include <QShortcut>
 #include <QPixmap>
 #include <QDir>
@@ -45,6 +46,12 @@ ControlPanel::ControlPanel(QWidget *parent) : QWidget(parent), 	m_coverArt(new C
 	connect(nextButton, SIGNAL(clicked()), MPD::instance(), SLOT(next()));
 	connect(volumeSlider, SIGNAL(valueChanged(int)), MPD::instance(), SLOT(setVolume(int)));
 	connect(timeSlider, SIGNAL(timeChanged(int)), MPD::instance(), SLOT(seek(int)));
+
+        connect(playButton, SIGNAL(clicked()), LocalPlayback::instance(), SLOT(play()));
+        connect(pauseButton, SIGNAL(clicked()), LocalPlayback::instance(), SLOT(stop()));
+        connect(stopButton, SIGNAL(clicked()), LocalPlayback::instance(), SLOT(stop()));
+        connect(volumeLabel, SIGNAL(clicked(bool)), LocalPlayback::instance(), SLOT(setEnabled(bool)));
+
 	connect(timeSlider, SIGNAL(valueChanged(int)), elapsedLabel, SLOT(setTime(int)));
 	connect(MPD::instance(), SIGNAL(volumeUpdated(int)), volumeSlider, SLOT(setValue(int)));
 	connect(MPD::instance(), SIGNAL(timeUpdated(int, int)), elapsedLabel, SLOT(setTime(int, int)));
@@ -70,6 +77,9 @@ ControlPanel::ControlPanel(QWidget *parent) : QWidget(parent), 	m_coverArt(new C
 	connect(m_volUpKey, SIGNAL(activated()), MPD::instance(), SLOT(volumeUp()));
 	connect(m_volDnKey, SIGNAL(activated()), MPD::instance(), SLOT(volumeDown()));
 	setSong(MPDSong());
+
+        // not needed by me
+        lyricsButton->setVisible(false);
 }
 
 void ControlPanel::updateTranslation() {

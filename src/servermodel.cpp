@@ -27,7 +27,7 @@ ServerModel::ServerModel(QObject *parent) : QAbstractTableModel(parent),
 }
 
 int ServerModel::columnCount(const QModelIndex &) const {
-	return 4;
+        return 5;
 }
 
 QVariant ServerModel::data(const QModelIndex &index, int role) const {
@@ -44,6 +44,8 @@ QVariant ServerModel::data(const QModelIndex &index, int role) const {
 			return si.port();
 		case 3:
 			return role == Qt::EditRole ? "" : si.password().isEmpty() ? "" : "********";
+                case 4:
+                        return si.streamingURL();
 	}
 	return QVariant();
 }
@@ -70,12 +72,16 @@ bool ServerModel::setData(const QModelIndex &idx, const QVariant &value, int rol
 			si.setPassword(value.toString());
 			ok = true;
 			break;
+                case 4:
+                        si.setStreamingURL(value.toString());
+                        ok = true;
+                        break;
 	}
 
 	if (ok) {
 		m_servers.replace(idx.row(), si);
 		Config::instance()->setServers(m_servers);
-		emit dataChanged(index(idx.row(), 0), index(idx.row(), 3));
+                emit dataChanged(index(idx.row(), 0), index(idx.row(), 4));
 		return true;
 	}
 
@@ -89,7 +95,7 @@ Qt::ItemFlags ServerModel::flags(const QModelIndex &index) const {
 }
 
 QVariant ServerModel::headerData(int section, Qt::Orientation orientation, int role) const {
-	if (role == Qt::DisplayRole && section < 4 && section > -1 && orientation == Qt::Horizontal) {
+        if (role == Qt::DisplayRole && section < 5 && section > -1 && orientation == Qt::Horizontal) {
 		switch (section) {
 			case 0:
 				return QObject::tr("Name");
@@ -99,6 +105,8 @@ QVariant ServerModel::headerData(int section, Qt::Orientation orientation, int r
 				return QObject::tr("Port");
 			case 3:
 				return QObject::tr("Password");
+                        case 4:
+                                return QObject::tr("Streaming");
 		}
 	}
 	return QVariant();
@@ -133,7 +141,7 @@ bool ServerModel::moveUp(const QModelIndex &idx) {
 		return false;
 	m_servers.swap(idx.row(), idx.row() - 1);
 	Config::instance()->setServers(m_servers);
-	emit dataChanged(index(idx.row() - 1, 0), index(idx.row(), 3));
+        emit dataChanged(index(idx.row() - 1, 0), index(idx.row(), 4));
 	return true;
 }
 
@@ -142,6 +150,6 @@ bool ServerModel::moveDown(const QModelIndex &idx) {
 		return false;
 	m_servers.swap(idx.row(), idx.row() + 1);
 	Config::instance()->setServers(m_servers);
-	emit dataChanged(index(idx.row(), 0), index(idx.row() + 1, 3));
+        emit dataChanged(index(idx.row(), 0), index(idx.row() + 1, 4));
 	return true;
 }

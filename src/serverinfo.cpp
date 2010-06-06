@@ -21,18 +21,19 @@
 
 class ServerInfoPrivate : public QSharedData {
 public:
-	QString name, address, password;
+        QString name, address, password, streamingURL;
 	int port;
-	ServerInfoPrivate(const QString &n, const QString &a = "127.0.0.1", int p = 6600, const QString &w = QString()) :
+        ServerInfoPrivate(const QString &n, const QString &a = "127.0.0.1", int p = 6600, const QString &pwd = QString(), const QString &stream = QString()) :
 			name(n),
 			address(a),
-			password(w),
+                        password(pwd),
+                        streamingURL(stream),
 			port(p) {}
 
 };
 
 ServerInfo::ServerInfo() : d(0) {}
-ServerInfo::ServerInfo(const QString &n, const QString &a, int p, const QString &w) : d(new ServerInfoPrivate(n, a, p, w)) {}
+ServerInfo::ServerInfo(const QString &n, const QString &a, int p, const QString &pwd, const QString &stream) : d(new ServerInfoPrivate(n, a, p, pwd, stream)) {}
 ServerInfo::ServerInfo(const ServerInfo &other) : d(other.d) {}
 ServerInfo::~ServerInfo() {}
 
@@ -78,6 +79,16 @@ int ServerInfo::port() const {
 void ServerInfo::setPort(int p) {
 	Q_ASSERT(d);
 	d->port = p;
+}
+
+QString ServerInfo::streamingURL() const {
+        Q_ASSERT(d);
+        return d->streamingURL;
+}
+
+void ServerInfo::setStreamingURL(const QString &u) {
+        Q_ASSERT(d);
+        d->streamingURL = u;
 }
 
 bool ServerInfo::operator==(const ServerInfo &o) const {

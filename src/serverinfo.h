@@ -28,19 +28,28 @@ class ServerInfoPrivate;
 class ServerInfo {
 public:
 	ServerInfo();
-	ServerInfo(const QString &, const QString & = "127.0.0.1", int = 6600, const QString & = QString());
+        ServerInfo(const QString &, const QString & = "127.0.0.1", int = 6600, const QString & = QString(), const QString & = QString());
 	ServerInfo(const ServerInfo &);
 	~ServerInfo();
+
 	bool isNull() const;
-	QString address() const;
+
+        QString address() const;
 	void setAddress(const QString &);
-	QString name() const;
+
+        QString name() const;
 	void setName(const QString &);
-	QString password() const;
+
+        QString password() const;
 	void setPassword(const QString &);
-	int port() const;
+
+        int port() const;
 	void setPort(int);
-	bool operator==(const ServerInfo &) const;
+
+        QString streamingURL() const;
+        void setStreamingURL(const QString &);
+
+        bool operator==(const ServerInfo &) const;
 	ServerInfo &operator=(const ServerInfo &);
 
 private:
