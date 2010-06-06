@@ -8,14 +8,19 @@
 
 LocalPlayback *LocalPlayback::m_instance = 0;
 
-LocalPlayback::LocalPlayback(QObject* parent) : QObject(parent), m_enabled(false), m_player(new Phonon::MediaObject(this)), m_output(new Phonon::AudioOutput(Phonon::MusicCategory, this))
+LocalPlayback::LocalPlayback(QObject* parent) : QObject(parent), m_enabled(false), m_streamHandle(0)
 {
     connect(MPDConnection::instance(), SIGNAL(connected(ServerInfo)), this, SLOT(serverChanged(ServerInfo)));
     connect(MPDConnection::instance(), SIGNAL(disconnected(QString)), this, SLOT(stop()));
 
     connect(MPD::instance(), SIGNAL(playingSongUpdated(MPDSong)), this, SLOT(songChanged()));
 
-    connect(m_player, SIGNAL(stateChanged(Phonon::State,Phonon::State)), this, SLOT(stateChanged(Phonon::State,Phonon::State)));
+    BASS_Init(-1, 44100, 0, 0, NULL);
+}
+
+LocalPlayback::~LocalPlayback()
+{
+    BASS_Free();
 }
 
 LocalPlayback *LocalPlayback::instance() {
@@ -37,17 +42,17 @@ void LocalPlayback::play()
     if(m_serverURL.isEmpty()) return;
     if(!m_enabled) return;
 
-    Phonon::Path path = Phonon::createPath(m_player, m_output);
-    m_player->setCurrentSource(Phonon::MediaSource(m_serverURL));
-    m_player->play();
+    m_streamHandle = BASS_StreamCreateURL(m_serverURL.toLatin1().data(), 0, BASS_STREAM_AUTOFREE, NULL, NULL);
+    BASS_ChannelPlay(m_streamHandle, false);
 }
 
 void LocalPlayback::stop()
 {
     if(m_serverURL.isEmpty()) return;
-    if(m_player == 0) return;
+    if(m_streamHandle == 0) return;
 
-    m_player->stop();
+    BASS_ChannelStop(m_streamHandle);
+    BASS_StreamFree(m_streamHandle);
 }
 
 void LocalPlayback::setEnabled(bool value)
@@ -63,14 +68,14 @@ void LocalPlayback::setEnabled(bool value)
     }
 }
 
-void LocalPlayback::stateChanged(Phonon::State newstate, Phonon::State oldstate)
+/*void LocalPlayback::stateChanged(Phonon::State newstate, Phonon::State oldstate)
 {
     //restart playback
     if(newstate == 1 && oldstate == 2 && m_enabled)
     {
         m_player->play();
     }
-}
+}*/
 
 void LocalPlayback::songChanged()
 {

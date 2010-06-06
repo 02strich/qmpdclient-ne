@@ -4,8 +4,7 @@
 #include "serverinfo.h"
 
 #include <QObject>
-#include <Phonon/MediaObject>
-#include <Phonon/AudioOutput>
+#include <bass.h>
 
 class LocalPlayback : public QObject
 {
@@ -15,6 +14,7 @@ public:
     static LocalPlayback* instance();
 
     LocalPlayback(QObject* parent = 0);
+    ~LocalPlayback();
 
     bool isEnabled() const { return m_enabled; } ;
 
@@ -26,15 +26,13 @@ public slots:
     void serverChanged(ServerInfo);
     void songChanged();
 
-    void stateChanged(Phonon::State newstate, Phonon::State oldstate);
 private:
     static LocalPlayback* m_instance;
 
     QString m_serverURL;
     bool m_enabled;
 
-    Phonon::MediaObject* m_player;
-    Phonon::AudioOutput* m_output;
+    HSTREAM m_streamHandle;
 };
 
 #endif // LOCALPLAYBACK_H

@@ -17,11 +17,10 @@ RESOURCES = qmpdclient.qrc
 VERSION = 1.1.3
 DEFINES += NAMEVER='"\\"QMPDClient $$VERSION\\""'
 DEFINES += VERSION='"\\"$$VERSION\\""'
-INCLUDEPATH += src
+INCLUDEPATH += src lib/bass
 QT += network \
     xml \
-    xmlpatterns \
-    phonon
+    xmlpatterns
 FORMS += ui/aboutdialog.ui \
     ui/addradiodialog.ui \
     ui/controlpanel.ui \
@@ -222,7 +221,7 @@ UI_DIR = .ui
 # Platform specific
 win32 { 
     # debug:CONFIG += console
-    LIBS += -lws2_32
+    LIBS += -Llib/bass -lws2_32 -lbass
     RC_FILE = icons/resource.rc
     SOURCES += src/qmpdclient_win.cpp
     HEADERS += src/notifications_gfw.h
