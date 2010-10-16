@@ -512,6 +512,11 @@ void Config::setAutoAddSongs(bool a) {
 	emit autoAddSongsChanged(a);
 }
 
+void Config::setAutoAddAlbums(bool a) {
+	setValue("/dynamicplaylist/albums", a);
+	emit autoAddAlbumsChanged(a);
+}
+
 void Config::setAutoAddCount(int c) {
 	setValue("/dynamicplaylist/count", c);
 }
@@ -526,6 +531,10 @@ void Config::setAutoRemoveSongs(bool r) {
 
 bool Config::autoAddSongs() const {
 	return value("/dynamicplaylist/add", false).toBool();
+}
+
+bool Config::autoAddAlbums() const {
+	return value("/dynamicplaylist/albums", false).toBool();
 }
 
 int Config::autoAddPos() const {
@@ -586,7 +595,7 @@ void Config::setPlaylistsSplitterSizes(const QByteArray &l) {
 }
 
 bool Config::saveTransientSettings() const {
-    return value("/qmpdlcient/saveTransient", false).toBool();
+    return value("/qmpdlcient/saveTransient", true).toBool();
 }
 
 QSize Config::windowSize() const {
@@ -704,4 +713,12 @@ bool Config::disregardLeadingThe() const {
 
 void Config::setDisregardLeadingThe(bool b) {
 	setValue("/looknfeel/respectleadingthe", !b);
+}
+
+QString Config::lastFmServer() const {
+	return value("/lastfm/server", "post.audioscrobbler.com").toString();
+}
+
+void Config::setLastFmServer(const QString &s) {
+	setValue("/lastfm/server", s);
 }

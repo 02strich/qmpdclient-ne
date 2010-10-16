@@ -335,10 +335,12 @@ void PreferencesDialog::initLanguagePage() {
 
 void PreferencesDialog::initDynamicPlaylistPage() {
 	autoAddCheck->setChecked(Config::instance()->autoAddSongs());
+	autoAddAlbumsCheck->setChecked(Config::instance()->autoAddAlbums());
 	autoAddPosSpin->setValue(Config::instance()->autoAddPos());
 	autoRemoveCheck->setChecked(Config::instance()->autoRemoveSongs());
 
 	connect(autoAddCheck, SIGNAL(toggled(bool)), Config::instance(), SLOT(setAutoAddSongs(bool)));
+	connect(autoAddAlbumsCheck, SIGNAL(toggled(bool)), Config::instance(), SLOT(setAutoAddAlbums(bool)));
 	connect(autoAddPosSpin, SIGNAL(valueChanged(int)), Config::instance(), SLOT(setAutoAddPos(int)));
 	connect(autoRemoveCheck, SIGNAL(toggled(bool)), Config::instance(), SLOT(setAutoRemoveSongs(bool)));
 }
@@ -423,6 +425,7 @@ void PreferencesDialog::initLastFmPage() {
 	lastFmPasswordEdit->setText(Config::instance()->lastFmPassword());
 	lastFmScrobblerTimerSlider->setValue(Config::instance()->lastFmScrobblerTimer());
 	lastFmScrobblerTimerSpiner->setValue(Config::instance()->lastFmScrobblerTimer());
+	lastFmServerEdit->setText(Config::instance()->lastFmServer());
 	connect(lastFmUsernameEdit, SIGNAL(textChanged(QString)), Config::instance(), SLOT(setLastFmUsername(QString)));
 	connect(lastFmPasswordEdit, SIGNAL(textChanged(QString)), Config::instance(), SLOT(setLastFmPassword(QString)));
 	connect(submitSongsToLastFmCheck, SIGNAL(toggled(bool)), Config::instance(), SLOT(setSubmitSongsToLastFm(bool)));
@@ -431,6 +434,7 @@ void PreferencesDialog::initLastFmPage() {
 	connect(lastFmScrobblerTimerSlider, SIGNAL(sliderMoved(int)), this, SLOT(setLastFmSpiner(int)));
 	connect(lastFmScrobblerTimerSlider, SIGNAL(sliderMoved(int)), Config::instance(), SLOT(setLastFmScrobblerTimer(int)));
 	connect(lastFmScrobblerTimerSpiner, SIGNAL(valueChanged(int)), Config::instance(), SLOT(setLastFmScrobblerTimer(int)));
+	connect(lastFmServerEdit, SIGNAL(textChanged(QString)), Config::instance(), SLOT(setLastFmServer(QString)));
 }
 
 PreferencesDialog::~PreferencesDialog() {
@@ -665,9 +669,17 @@ void PreferencesDialog::hashLastFmPassword() {
 }
 
 void PreferencesDialog::setLastFmSlider(int value) {
-    lastFmScrobblerTimerSlider->setValue(value);
+	lastFmScrobblerTimerSlider->setValue(value);
 }
 
 void PreferencesDialog::setLastFmSpiner(int value) {
-    lastFmScrobblerTimerSpiner->setValue(value);
+	lastFmScrobblerTimerSpiner->setValue(value);
+}
+
+void PreferencesDialog::setLastFmServer() {
+	lastFmServerEdit->setText("post.audioscrobbler.com");
+}
+
+void PreferencesDialog::setLibreFmServer() {
+	lastFmServerEdit->setText("turtle.libre.fm");
 }

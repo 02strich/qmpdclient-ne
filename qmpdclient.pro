@@ -18,9 +18,8 @@ VERSION = 1.1.3
 DEFINES += NAMEVER='"\\"QMPDClient $$VERSION\\""'
 DEFINES += VERSION='"\\"$$VERSION\\""'
 INCLUDEPATH += src lib/bass
-QT += network \
-    xml \
-    xmlpatterns
+QT += network xml xmlpatterns webkit
+
 FORMS += ui/aboutdialog.ui \
     ui/addradiodialog.ui \
     ui/controlpanel.ui \

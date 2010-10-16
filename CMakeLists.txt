@@ -1,10 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 
-find_package(Qt4 4.4.0 COMPONENTS QtCore QtGui QtNetwork QtXml QtXmlPatterns REQUIRED QtDBus)
+find_package(Qt4 4.4.0 COMPONENTS QtCore QtGui QtNetwork QtXml QtXmlPatterns REQUIRED QtDBus X11)
 
 SET (QT_USE_QTNETWORK TRUE)
 SET (QT_USE_QTXMLPATTERNS TRUE)
 SET (QT_USE_QTXML TRUE)
+SET (QT_USE_QTWEBKIT TRUE)
 
 if(NOT DEFINED VERSION)
 	find_program (GIT_CMD git)
@@ -40,7 +41,6 @@ set(QMPDClient_srcs
 	src/iconmanager.cpp
 	src/idealbar.cpp
 	src/idealsplitter.cpp
-	src/jumptosongdialog.cpp
 	src/lastfmsubmitter.cpp
 	src/libmpdclient.c
 	src/librarypanel.cpp
@@ -125,7 +125,6 @@ set(QMPDClient_hdrs
 	src/iconmanager.h
 	src/idealbar.h
 	src/idealsplitter.h
-	src/jumptosongdialog.h
 	src/lastfmsubmitter.h
 	src/libmpdclient.h
 	src/librarypanel.h
@@ -191,7 +190,6 @@ SET(QMPDClient_uis
 	ui/controlpanel.ui
 	ui/coverartdialog.ui
 	ui/directorypanel.ui
-	ui/jumptosongdialog.ui
 	ui/librarypanel.ui
 	ui/lyricsdialog.ui
 	ui/mainwindow.ui

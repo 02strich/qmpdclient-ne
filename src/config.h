@@ -92,6 +92,7 @@ public:
 	int autoAddCount() const;
 	int autoAddPos() const;
 	bool autoAddSongs() const;
+	bool autoAddAlbums() const;
 	bool autoRemoveSongs() const;
 
 	// Last.fm
@@ -100,6 +101,7 @@ public:
 	QString lastFmPassword() const;
 	bool lastFmHashedPassword() const;
 	int lastFmScrobblerTimer() const;
+	QString lastFmServer() const;
 
 	// Tag guesser
 	QString guessPattern() const;
@@ -188,6 +190,7 @@ public slots:
 	void setAutoAddCount(int);
 	void setAutoAddPos(int);
 	void setAutoAddSongs(bool);
+	void setAutoAddAlbums(bool);
 	void setAutoRemoveSongs(bool);
 
 	// Tag guesser
@@ -201,6 +204,7 @@ public slots:
 	void setLastFmPassword(const QString &);
 	void setLastFmHashedPassword(bool);
 	void setLastFmScrobblerTimer(int);
+	void setLastFmServer(const QString &);
 
 signals:
 	void alternatingChanged(bool);
@@ -217,6 +221,7 @@ signals:
 	void styleChanged(const QString &);
 	void trayIconChanged(bool);
 	void autoAddSongsChanged(bool);
+	void autoAddAlbumsChanged(bool);
 
 private:
 	Config();
