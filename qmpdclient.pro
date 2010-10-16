@@ -246,6 +246,7 @@ unix {
         }
     }
     mac { 
+        LIBS += -Llib/bass -lbass
         RC_FILE = icons/qmpdclient.icns
         SOURCES += src/qmpdclient_mac.cpp
     }
